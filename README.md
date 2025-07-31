@@ -77,10 +77,10 @@ df_urls = pd.read_csv('startup_urls.csv')
 #### Extração de informações com `BeautifulSoup`:
 
 ```python
-soup.select('[class^="headlines__H1"]')  # Nome
-soup.select('[class^="ProfileDetails__ProfileDetailsContent"] > div')  # Descrição
-soup.select('[class^="ContentTagList__ContentTagListItem"]')  # País e Segmento
-soup.select('[class^="DetailsLayout__SocialMediaWrapper"]')  # Redes sociais
+soup.select('[class^="headlines__H1"]')  # Nome  
+soup.select('[class^="ProfileDetails__ProfileDetailsContent"] > div')  # Descrição  
+soup.select('[class^="ContentTagList__ContentTagListItem"]')  # País e Segmento  
+soup.select('[class^="DetailsLayout__SocialMediaWrapper"]')  # Redes sociais  
 soup.select('[class^="Button__StyledButton"]')  # Botões (Website)
 ```
 
@@ -106,6 +106,102 @@ soup.select('[class^="Button__StyledButton"]')  # Botões (Website)
 * Permitir salvar dados parcialmente mesmo se interrompido.
 * Usar `tqdm` para barra de progresso.
 * Modularizar em funções ou classes para reaproveitamento.
+
+---
+
+## 📧 Documentação – Coletor de E-mails de Sites
+
+### 📌 Objetivo
+
+Este script automatiza a extração de endereços de e-mail de sites informados em um arquivo `.csv`. Ele navega nas páginas iniciais e também em páginas relacionadas a contato, utilizando `Selenium` e `re` (expressões regulares).
+
+---
+
+### 📂 Entrada
+
+Um arquivo CSV chamado `links.csv` com uma coluna `url`:
+
+```csv
+url
+https://empresa1.com
+https://empresa2.org
+...
+```
+
+---
+
+### 📤 Saída
+
+* `emails_encontrados.csv`: Contém os sites e os e-mails encontrados.
+* `sem_email.csv`: Lista os sites onde nenhum e-mail foi encontrado.
+
+---
+
+### 📦 Requisitos
+
+```bash
+pip install selenium pandas chromedriver-autoinstaller
+```
+
+---
+
+### 🧠 Como Funciona
+
+1. Lê os sites a partir de `links.csv`.
+2. Usa `Selenium` (em modo headless) para visitar os sites.
+3. Extrai os e-mails da página inicial.
+4. Se necessário, acessa páginas de contato (usando palavras-chave como “contato”, “contact”, etc.).
+5. Extrai e valida os e-mails usando expressões regulares.
+6. Salva os resultados em dois arquivos CSV.
+
+---
+
+### 🔍 Palavras-chave para identificar páginas de contato
+
+```python
+KEYWORDS = ['contato', 'fale conosco', 'about', 'about us', 'contact', 'contact us', 'contáctanos']
+```
+
+---
+
+### 📁 Principais Funções
+
+#### `get_domain_from_url(url)`
+
+Extrai e padroniza o domínio a partir da URL.
+
+#### `create_email_pattern(domain)`
+
+Gera um padrão regex específico para e-mails daquele domínio.
+
+#### `setup_driver(headless)`
+
+Configura o navegador Chrome para automação.
+
+#### `find_emails_on_page(driver, pattern)`
+
+Busca e-mails na página atual com base no padrão regex.
+
+#### `find_contact_links(driver)`
+
+Procura links na página atual que levem a páginas de contato.
+
+#### `scrape_emails_from_site(url)`
+
+Função principal que executa o processo de scraping em um único site.
+
+#### `save_results(...)`
+
+Salva os e-mails encontrados e os sites sem e-mail nos arquivos finais.
+
+---
+
+### 🛠 Sugestões de melhorias
+
+* Adicionar suporte a múltiplos domínios por página.
+* Tornar o tempo de `sleep` aleatório para evitar bloqueios.
+* Adicionar tratamento para redirecionamentos.
+* Incluir barra de progresso com `tqdm`.
 
 ---
 
